@@ -64,6 +64,11 @@ public class PieFileBrowser extends Application{
 		stage.setTitle("DAS IST MEINE BACHELORARBEIT, BITCH!");
 		stage.show();
 		
+		pie = new PieBrowser();
+		pie.setTranslateX(screenSize.getWidth()/2);
+		pie.setTranslateY(screenSize.getHeight()/2);
+		container.getChildren().addAll(pie);
+		
 	}
 
 }
