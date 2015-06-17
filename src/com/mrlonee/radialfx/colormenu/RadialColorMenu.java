@@ -16,7 +16,9 @@
  */
 package com.mrlonee.radialfx.colormenu;
 
+import java.awt.Toolkit;
 import java.awt.geom.Point2D;
+import java.io.Console;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -33,6 +35,7 @@ import javafx.scene.shape.LineToBuilder;
 import javafx.scene.shape.MoveToBuilder;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathBuilder;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import com.mrlonee.radialfx.core.RadialMenuItem;
@@ -48,13 +51,15 @@ public class RadialColorMenu extends Group {
 	selectedColor = new SimpleObjectProperty<Paint>(Color.BLACK);
 	itemExtMouseHandler = new ItemExtEventHandler();
 
-	final Color[] colors = new Color[] { Color.BLACK, Color.web("00275b"),
-		Color.web("008021"), Color.web("8e0000"), Color.web("ff8800") };
+	final Color[] colors = new Color[] { Color.PEACHPUFF, Color.PALETURQUOISE,
+		Color.PINK, Color.HOTPINK, Color.ALICEBLUE, Color.POWDERBLUE, Color.ROSYBROWN, Color.PLUM };
 
 	int i = 0;
 	for (final Color color : colors) {
 
-	    addColorItem(color, i * 360d / colors.length, 360d / colors.length);
+	    addColorItem(color, (i * 360d / colors.length) + 67.50, 360d / colors.length);
+	    
+	    System.out.println("This is your angle:" + i * 360d / colors.length);
 
 	    i++;
 	}
@@ -74,7 +79,8 @@ public class RadialColorMenu extends Group {
 	final RadialMenuItem colorItem = RadialMenuItemBuilder.create()
 		.startAngle(startAngle).length(length).backgroundFill(color)
 		.backgroundMouseOnFill(color).strokeVisible(false).offset(minOffset)
-		.innerRadius(60).radius(140).build();
+		.innerRadius(60).radius(Toolkit.getDefaultToolkit()
+				.getScreenSize().getHeight()/2 - 60).build();
 	getChildren().add(colorItem);
 
 	final Path extGraphic = PathBuilder
