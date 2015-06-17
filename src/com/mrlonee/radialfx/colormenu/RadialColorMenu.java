@@ -54,14 +54,14 @@ public class RadialColorMenu extends Group {
 	final Color[] colors = new Color[] { Color.PEACHPUFF, Color.PALETURQUOISE,
 		Color.PINK, Color.HOTPINK, Color.ALICEBLUE, Color.POWDERBLUE, Color.ROSYBROWN, Color.PLUM };
 
-	int i = 0;
+	int i = colors.length;
 	for (final Color color : colors) {
 
 	    addColorItem(color, (i * 360d / colors.length) + 67.50, 360d / colors.length);
 	    
-	    System.out.println("This is your angle:" + i * 360d / colors.length);
+	    System.out.println("This is your angle:" + i * 360d / colors.length + "this is your color: ");
 
-	    i++;
+	    i--;
 	}
 
 	final Circle center = new Circle();
