@@ -65,9 +65,16 @@ public class PieFileBrowser extends Application{
 		stage.show();
 		
 		pie = new PieBrowser();
-		pie.setTranslateX(screenSize.getWidth()/2);
+		pie.setTranslateX(screenSize.getWidth()/2); //alignment on screen
 		pie.setTranslateY(screenSize.getHeight()/2);
 		container.getChildren().addAll(pie);
+		
+		intiateOnClickListeners();
+		
+	}
+
+	private void intiateOnClickListeners() {
+		// TODO Auto-generated method stub
 		
 	}
 

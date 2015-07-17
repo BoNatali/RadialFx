@@ -69,6 +69,7 @@ public class RadialColorMenuDemo extends Application {
 		if (event.isSecondaryButtonDown()) {
 		    radialMenu.setTranslateX(event.getX());
 		    radialMenu.setTranslateY(event.getY());
+		    System.out.println("look what happened");
 		}
 	    }
 	});
