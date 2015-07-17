@@ -2,6 +2,7 @@ package de.ur.mi.bonatali.piebrowser;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class PieFileBrowser extends Application{
 	private PieBrowser pie;
 	private Group container; //Gruppe von grafischen Elementen
 	
+	private String rootUrl;
+	private Folder root;
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 		// TODO Auto-generated method stub
@@ -63,6 +67,13 @@ public class PieFileBrowser extends Application{
 		stage.toFront();
 		stage.setTitle("DAS IST MEINE BACHELORARBEIT, BITCH!");
 		stage.show();
+		
+		rootUrl = "/Users/Natali/Music/";
+		root = new Folder (rootUrl);
+		String rootName = root.getName();
+		File [] items = root.getNextItemSet();
+		System.out.println ("My Folder: " + rootName + items.toString());
+		
 		
 		pie = new PieBrowser();
 		pie.setTranslateX(screenSize.getWidth()/2); //alignment on screen

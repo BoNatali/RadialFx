@@ -4,19 +4,36 @@ import java.io.File;
 
 public class Folder {
 	
+
+	private File folder;
 	private String name;
-	private String parentName;
 	private File [] items;
 	
-	public Folder (String name, String parentName, File [] items) {
-		this.name = name;
-		this.parentName = parentName;
-		this.items = items;
+	private int currentIndex = 0;
+	
+	
+	public Folder (String url) {
+		folder = new File (url);
+		name = folder.getName();
+		items = folder.listFiles();
 	}
 	
 	public File [] getNextItemSet () {
-		File [] set = items;
+		File [] set = new File [8];
+		int counter = 0;
+		for (int i = currentIndex; i<items.length; i++) {
+			if (counter < 8) {
+				set [counter] = items [currentIndex];
+			} else {
+				break;
+			}
+			
+		}
 		return set;
+	}
+	
+	public String getName () {
+		return name;
 	}
 
 }
