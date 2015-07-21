@@ -71,9 +71,12 @@ public class PieFileBrowser extends Application{
 		rootUrl = "/Users/Natali/Music/";
 		root = new Folder (rootUrl);
 		String rootName = root.getName();
-		File [] items = root.getNextItemSet();
-		System.out.println ("My Folder: " + rootName + items.toString());
 		
+		String [] itemNames = root.getNextItems();
+		System.out.println ("My Folder: " + rootName);
+		for (int i = 0; i<itemNames.length; i++){
+			System.out.println ("my Item round 1: " + itemNames [i]);
+		}
 		
 		pie = new PieBrowser();
 		pie.setTranslateX(screenSize.getWidth()/2); //alignment on screen

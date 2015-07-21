@@ -1,6 +1,7 @@
 package de.ur.mi.bonatali.piebrowser;
 
 import java.io.File;
+import java.net.URLConnection;
 
 public class Folder {
 	
@@ -8,6 +9,10 @@ public class Folder {
 	private File folder;
 	private String name;
 	private File [] items;
+	private String [] itemNames;
+	
+	private int setNum = 8;
+	private int max;
 	
 	private int currentIndex = 0;
 	
@@ -15,25 +20,52 @@ public class Folder {
 	public Folder (String url) {
 		folder = new File (url);
 		name = folder.getName();
-		items = folder.listFiles();
+		items = folder.listFiles(); //directories and files
+		max = items.length;
 	}
 	
 	public File [] getNextItemSet () {
-		File [] set = new File [8];
-		int counter = 0;
-		for (int i = currentIndex; i<items.length; i++) {
-			if (counter < 8) {
-				set [counter] = items [currentIndex];
+		File [] set = new File [setNum];
+		for (int i = 0; i<setNum; i++) {
+			if (i+currentIndex < items.length) {
+				set [i] = items [i+currentIndex];
 			} else {
-				break;
+				currentIndex = 0; //von neu
 			}
 			
+			
 		}
+		currentIndex += setNum;
+		return set;
+	}
+	
+	public String [] getNextItems () {
+		String [] set = new String [setNum];
+		for (int i = 0; i<setNum; i++) {
+			if (i+currentIndex < items.length) {
+				set [i] = items [i+currentIndex].getName();
+			} else {
+				currentIndex = 0; //von neu
+			}
+			
+			
+		}
+		currentIndex += setNum;
 		return set;
 	}
 	
 	public String getName () {
 		return name;
+	}
+	
+	public boolean isFolder (File item) {
+		return item.isDirectory();
+	}
+	
+	public void openFile (File item) {
+		if (!item.isDirectory()) {
+			//openFile
+		} 
 	}
 
 }
