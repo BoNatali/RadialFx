@@ -75,7 +75,7 @@ public class PieFileBrowser extends Application{
 		String [] itemNames = root.getNextItems();
 		System.out.println ("My Folder: " + rootName);
 		for (int i = 0; i<itemNames.length; i++){
-			System.out.println ("my Item round 1: " + itemNames [i]);
+			System.out.println ("my Item round 1: " + itemNames [i] + IconMap.getFileIcon(itemNames[i]));
 		}
 		
 		pie = new PieBrowser();
