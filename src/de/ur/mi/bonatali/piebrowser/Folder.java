@@ -43,7 +43,9 @@ public class Folder {
 		String [] set = new String [setNum];
 		for (int i = 0; i<setNum; i++) {
 			if (i+currentIndex < items.length) {
+				if (items [i+currentIndex].getName() != null)
 				set [i] = items [i+currentIndex].getName();
+				else set [i] = "warum funktioniert das nich?.zip";
 			} else {
 				currentIndex = 0; //von neu
 			}

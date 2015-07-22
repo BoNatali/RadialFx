@@ -46,7 +46,7 @@ import javafx.util.Duration;
 import com.mrlonee.radialfx.core.RadialMenuItem;
 import com.mrlonee.radialfx.core.RadialMenuItemBuilder;
 
-public class RadialColorMenu extends Group {
+public class RadialColorSubMenu extends Group {
 
     private ItemExtEventHandler itemExtMouseHandler;
     private ObjectProperty<Paint> selectedColor;
@@ -57,7 +57,7 @@ public class RadialColorMenu extends Group {
     Group submenu;
 
     //refactored
-    public RadialColorMenu() {
+    public RadialColorSubMenu() {
 	selectedColor = new SimpleObjectProperty<Paint>(Color.AQUA);
 	itemExtMouseHandler = new ItemExtEventHandler();
 

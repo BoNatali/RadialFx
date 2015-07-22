@@ -68,15 +68,50 @@ public class PieFileBrowser extends Application{
 		stage.setTitle("DAS IST MEINE BACHELORARBEIT, BITCH!");
 		stage.show();
 		
-		rootUrl = "/Users/Natali/Music/";
+		rootUrl = "/Users/Natali/Documents/test";
 		root = new Folder (rootUrl);
 		String rootName = root.getName();
 		
 		String [] itemNames = root.getNextItems();
+		Image [] itemIcons = new Image [8];
 		System.out.println ("My Folder: " + rootName);
 		for (int i = 0; i<itemNames.length; i++){
-			System.out.println ("my Item round 1: " + itemNames [i] + IconMap.getFileIcon(itemNames[i]));
+			System.out.println ("my Item round 1: " + itemNames [i]);
+			itemIcons [i] = IconMap.getFileIcon(itemNames [i]);
 		}
+		
+		itemNames = root.getNextItems();
+		itemIcons = new Image [8];
+		System.out.println ("My Folder: " + rootName);
+		for (int i = 0; i<itemNames.length; i++){
+			System.out.println ("my Item round 2: " + itemNames [i]);
+			itemIcons [i] = IconMap.getFileIcon(itemNames [i]);
+		}
+		
+		itemNames = root.getNextItems();
+		itemIcons = new Image [8];
+		System.out.println ("My Folder: " + rootName);
+		for (int i = 0; i<itemNames.length; i++){
+			System.out.println ("my Item round 3: " + itemNames [i]);
+			itemIcons [i] = IconMap.getFileIcon(itemNames [i]);
+		}
+		
+		itemNames = root.getNextItems();
+		itemIcons = new Image [8];
+		System.out.println ("My Folder: " + rootName);
+		for (int i = 0; i<itemNames.length; i++){
+			System.out.println ("my Item round 4: " + itemNames [i]);
+			itemIcons [i] = IconMap.getFileIcon(itemNames [i]);
+		}
+		
+		itemNames = root.getNextItems();
+		itemIcons = new Image [8];
+		System.out.println ("My Folder: " + rootName);
+		for (int i = 0; i<itemNames.length; i++){
+			System.out.println ("my Item round 5: " + itemNames [i]);
+			itemIcons [i] = IconMap.getFileIcon(itemNames [i]);
+		}
+		
 		
 		pie = new PieBrowser();
 		pie.setTranslateX(screenSize.getWidth()/2); //alignment on screen
