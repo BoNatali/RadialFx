@@ -30,8 +30,11 @@ import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -46,28 +49,39 @@ import javafx.util.Duration;
 import com.mrlonee.radialfx.core.RadialMenuItem;
 import com.mrlonee.radialfx.core.RadialMenuItemBuilder;
 
+import de.ur.mi.bonatali.piebrowser.IconMap;
+
 public class RadialColorMenu extends Group {
 
     private ItemExtEventHandler itemExtMouseHandler;
-    private ObjectProperty<Paint> selectedColor;
     private final double minOffset = 5;
-    private Collection <RadialMenuItem> subItems = new ArrayList <RadialMenuItem>();
-    private Collection <RadialMenuItem> parentItems = new ArrayList <RadialMenuItem> ();
+    
     private int evoke = 0;
-    Group submenu;
+    
+    private boolean hoveringSubmenu;
+    
+    private ObjectProperty<Paint> selectedColor;
+    
+    private Group submenu;
+    private Collection <RadialMenuItem> subItems = new ArrayList <RadialMenuItem>();
+    private Collection <RadialMenuItem> items = new ArrayList <RadialMenuItem>();
+    
 
-    //refactored
+
     public RadialColorMenu() {
-	selectedColor = new SimpleObjectProperty<Paint>(Color.AQUA);
-	itemExtMouseHandler = new ItemExtEventHandler();
+    	selectedColor = new SimpleObjectProperty<Paint>(Color.web("#fdbc55"));
+    	itemExtMouseHandler = new ItemExtEventHandler();
+    	
+    	submenu = new Group ();
 
-	final Color[] colors = new Color[] { Color.PEACHPUFF, Color.PALETURQUOISE,
-		Color.PINK, Color.HOTPINK, Color.ALICEBLUE, Color.POWDERBLUE, Color.ROSYBROWN, Color.PLUM };
+		final Color[] colors = new Color[] { Color.web("#fdbc55"), Color.web("#ffdba2"),
+				Color.web("#fdbc68"), Color.web("#edcc97"), Color.web("#edb459"), 
+				Color.web("#fdbc55"),Color.web("#edcc97"),Color.web("#fdbc68") };
 
-	int i = colors.length;
-	for (final Color color : colors) {
-	    addColorItem(color, (i * 360d / colors.length) + 67.50, 360d / colors.length);
-	    i--;
+		int i = colors.length;
+		for (final Color color : colors) {
+		    addColorItem(color, (i * 360d / colors.length) + 67.50, 360d / colors.length);
+		    i--;
 	}
 	
 	
@@ -81,12 +95,30 @@ public class RadialColorMenu extends Group {
 	getChildren().add(center);
     }
     
+    private void drawSubmenu(MouseEvent event) {
+		boolean isFolder = true;
+		
+		if (isFolder) {
+			RadialMenuItem parent = (RadialMenuItem) event.getSource();
+			System.out.println("my parent");
+			ObjectProperty<Paint> parentPaint = parent.backgroundFillProperty();
+			Color parentColor =  (Color) parentPaint.getValue();
+			double startAngle = parent.getStartAngle();
+			double innerEndX = parent.getinnerEndX();
+			double innerEndY = parent.getinnerEndX();
+			
+			
+			setUpSubMenu(parentColor, innerEndX, innerEndY, startAngle);
+			parent.getChildren().add(submenu);
+			System.out.println("This is my startangle: " + startAngle);
+			//add Submenu, 8 Items, half angle, radius = size - radiusParent, startAngle innerEndY, innerEndx
+		}
+		
+	}
+    
     private void setUpSubMenu (Color parentColor, double parentEndX, double parentENDY, double startangle) {
     	final Color[] colors = new Color[8];
     	Arrays.fill(colors, parentColor);
-    	
-    	/*final Color[] colors = new Color[] { Color.PEACHPUFF, Color.PALETURQUOISE,
-    			Color.PINK, Color.HOTPINK, Color.ALICEBLUE, Color.POWDERBLUE, Color.ROSYBROWN, Color.PLUM };*/
 
     	submenu = new Group();
     		int i = 0;
@@ -99,17 +131,22 @@ public class RadialColorMenu extends Group {
     		    i++;
     		}
     		
-    		getChildren().addAll(subItems); 
+    		submenu.getChildren().addAll(subItems);
+    		
     		
 	}
 
     private void addColorSubItem(Color color, double startAngle, double length) {
     	double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    	System.out.println("But I am taking this one: " + startAngle);
+    	Image icon = IconMap.getFileIcon("default.png");
+    	ImageView iconNode = new ImageView ();
+    	iconNode.setImage(icon);
+    	
     	RadialMenuItem subItem = RadialMenuItemBuilder.create()
     			.startAngle(startAngle).length(length).backgroundFill(color)
     			.backgroundMouseOnFill(color).strokeVisible(false).offset(minOffset)
-    			.innerRadius(screenHeight/2 - 120 + 4).radius(screenHeight/2 - 20).build();
+    			.innerRadius(screenHeight/2 - 120 + 4).radius(screenHeight/2 - 20). graphic (iconNode).build();
+ 
     	subItems.add (subItem);
 		
 	}
@@ -119,10 +156,20 @@ public class RadialColorMenu extends Group {
 
     double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     
+    Image icon = IconMap.getFileIcon("default.png");
+	ImageView iconNode = new ImageView ();
+	iconNode.setImage(icon);
+	
+	
+    
 	final RadialMenuItem colorItem = RadialMenuItemBuilder.create()
-		.startAngle(startAngle).length(length).backgroundFill(color)
+		.startAngle(startAngle).length(length).backgroundFill(color).graphic(iconNode)
 		.backgroundMouseOnFill(color).strokeVisible(false).offset(minOffset)
 		.innerRadius(60).radius(screenHeight/2 - 120).build();
+	
+	System.out.println ("My graphic: " + colorItem.getGraphic().toString());
+	
+	items.add(colorItem);
 	getChildren().add(colorItem);
 	
 	//radius is set here
@@ -151,15 +198,16 @@ public class RadialColorMenu extends Group {
 
 	final Paint selectColor = Color.GRAY;
 	final double colorOffset = 6;
-	final RadialMenuItem colorItemSel = RadialMenuItemBuilder.create()
+	
+	/*final RadialMenuItem colorItemSel = RadialMenuItemBuilder.create()
 		.startAngle(startAngle + colorOffset).offset(minOffset)
 		.length(length - colorOffset * 2).backgroundFill(selectColor)
 		.strokeVisible(false).innerRadius(132).radius(134).build();
 	colorItemSel.setOpacity(0.0);
-	getChildren().add(colorItemSel);
+	getChildren().add(colorItemSel); */ 
 
-	final EventHandler<MouseEvent> mouseHandler = new ItemOnEventHandler(
-		colorItemSel, colorItem);
+	final RadialMenuItem colorItemSel = null;
+	final EventHandler<MouseEvent> mouseHandler = new ItemOnEventHandler(colorItem);
 	colorItem.setOnMouseEntered(mouseHandler);
 	colorItem.setOnMouseExited(mouseHandler);
 	colorItem.setOnMouseMoved(mouseHandler);
@@ -183,96 +231,91 @@ public class RadialColorMenu extends Group {
 	    selected = item;
 	}
     }
+    
+    private final class SubItemOnEventHandler implements EventHandler<MouseEvent> {
+    	private RadialMenuItem subItem; 
+    	
+    	
+    	private SubItemOnEventHandler(final RadialMenuItem subItem) {
+    	    this.subItem = subItem;
+    	   
+    	}
+
+		@Override
+		public void handle(MouseEvent event) {
+			EventType<? extends MouseEvent> action = event.getEventType();
+			
+			if (action == MouseEvent.MOUSE_CLICKED) {
+				//open or change to root
+			}
+			
+			if (action == MouseEvent.MOUSE_ENTERED_TARGET) {
+				hoveringSubmenu = true;
+			}
+			
+			if (action == MouseEvent.MOUSE_EXITED_TARGET) {
+				hoveringSubmenu = false;
+			}
+			
+		}
+    }
 
     private final class ItemOnEventHandler implements EventHandler<MouseEvent> {
 
-	private final RadialMenuItem colorItemSel;
 	private final RadialMenuItem colorItem;
-	private RadialMenuItem lastParent;
-	double offset = 0;
-	boolean enteredByInner = false;
-
-	private ItemOnEventHandler(final RadialMenuItem colorItemSel,
-		final RadialMenuItem colorItem) {
-	    this.colorItemSel = colorItemSel;
-	    this.colorItem = colorItem;
-	   
+	
+	private ItemOnEventHandler(final RadialMenuItem colorItem) {
+	    this.colorItem = colorItem; 
 	}
 
 	@Override
 	public void handle(final MouseEvent event) {
-		boolean submenuDisplayed = getChildren().containsAll(subItems);
-		
-	    if (event.getEventType() == MouseEvent.MOUSE_ENTERED) {
+		boolean submenuDisplayed = getChildren().contains(submenu);
+		EventType<? extends MouseEvent> action = event.getEventType ();
+
+	    if (action == MouseEvent.MOUSE_ENTERED) {
 	    	System.out.println ("Mouseevent evoked again: " + evoke);
 			evoke ++;
-				if (lastParent != colorItem) {
+			if (!colorItem.getChildren().contains(submenu)){
+				if (submenu != null) {
 					//delete old submenu
-					getChildren().removeAll(subItems);
-			    	subItems.clear();
-			    	//create new
-			    	System.out.println ("SUBMENU HERE PLS!");
-			    	drawSubmenu (event);
-			    	
+					System.out.println ("I ENTER THIS" + submenuDisplayed);
+					for (RadialMenuItem item : items) {
+						if (item.getChildren().contains(submenu)) {
+							item.getChildren().remove(submenu);
+							subItems.clear ();
+							System.out.println("AND I GET TO THIS:");
+							//do nothing for now
+						}
+						
 				}
-				lastParent = colorItem;
-	    		
-	    } else if (event.getEventType() == MouseEvent.MOUSE_EXITED) {
-	    	boolean enteredChildren = true;
-	    	System.out.println ("SUBMENU GONE PLS!");
+					
+				}
+				//give new submenu
+				drawSubmenu (event);
+			}
 	    	
-	    	
-		if (enteredByInner) {
-		   
-		 
-		    
-		}
-		enteredByInner = false;
-	    } else if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
-		if (enteredByInner) {
-		    final double distanceToCenter = Point2D.distance(
-			    event.getX(), event.getY(), 0, 0);
-
-		    offset = 0.4 * (distanceToCenter - colorItem
-			    .getInnerRadius());
-		    colorItem.setOffset(offset);
-		    colorItemSel.setOffset(offset);
-		}
 	    }
-	    ;
 	    
+	    if (event.getEventType() == MouseEvent.MOUSE_EXITED_TARGET) {
+	    	System.out.println("MY EVENT IS EVOKED");
+	    	colorItem.getChildren().remove(submenu);
+	    	subItems.clear();
+		}
 	    
+	    if (event.getEventType() == MouseEvent.MOUSE_EXITED) {
+	    	
+	    }
 	}
-	
-	public void setNames (String [] fileNames) {
+    }
+
+
+    public void setNames (String [] fileNames) {
 		
 	}
 	public void setIcons (Image [] fileIcons) {
 		
 	}
-
-	private void drawSubmenu(MouseEvent event) {
-		boolean isFolder = true;
-		
-		if (isFolder) {
-			RadialMenuItem parent = (RadialMenuItem) event.getSource();
-			System.out.println("my parent");
-			ObjectProperty<Paint> parentPaint = parent.backgroundFillProperty();
-			Color parentColor =  (Color) parentPaint.getValue();
-			double startAngle = parent.getStartAngle();
-			double innerEndX = parent.getinnerEndX();
-			double innerEndY = parent.getinnerEndX();
-			
-			
-			setUpSubMenu(parentColor, innerEndX, innerEndY, startAngle);
-			System.out.println("This is my startangle: " + startAngle);
-			//add Submenu, 8 Items, half angle, radius = size - radiusParent, startAngle innerEndY, innerEndx
-		}
-		
-	}
-
-    }
-
     public ObjectProperty<Paint> selectedColorProperty() {
 	return selectedColor;
     }

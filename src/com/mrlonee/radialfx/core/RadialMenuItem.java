@@ -162,7 +162,7 @@ public class RadialMenuItem extends Group implements ChangeListener<Object> {
 	    public void handle(final MouseEvent arg0) {
 		mouseOn = true;
 		RadialMenuItem.this.redraw();
-		System.out.println("Submenu.draw();");
+		System.out.println("Mouse entered Item");
 	    }
 	});
 
