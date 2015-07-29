@@ -23,6 +23,7 @@ import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Random;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -62,9 +63,11 @@ public class RadialColorMenu extends Group {
     
     private ObjectProperty<Paint> selectedColor;
     
+    private Color [] orangeHues = new Color [8];
+    
     private Group submenu;
     private Collection <RadialMenuItem> subItems = new ArrayList <RadialMenuItem>();
-    private Collection <RadialMenuItem> items = new ArrayList <RadialMenuItem>();
+    private ArrayList <RadialMenuItem> items = new ArrayList <RadialMenuItem>();
     
 
 
@@ -73,10 +76,10 @@ public class RadialColorMenu extends Group {
     	itemExtMouseHandler = new ItemExtEventHandler();
     	
     	submenu = new Group ();
+    	
+    	orangeHues = randomizeColors ();
 
-		final Color[] colors = new Color[] { Color.web("#fdbc55"), Color.web("#ffdba2"),
-				Color.web("#fdbc68"), Color.web("#edcc97"), Color.web("#edb459"), 
-				Color.web("#fdbc55"),Color.web("#edcc97"),Color.web("#fdbc68") };
+		final Color[] colors = orangeHues;
 
 		int i = colors.length;
 		for (final Color color : colors) {
@@ -84,18 +87,45 @@ public class RadialColorMenu extends Group {
 		    i--;
 	}
 	
-	
+	getChildren().addAll(items);
 
 	final Circle center = new Circle();
 	center.fillProperty().bind(selectedColor);
 	center.setRadius(60);
 	center.setCenterX(0);
 	center.setCenterY(0);
+	final EventHandler<MouseEvent> centerMouseHandler = new RootEventHandler();
+	center.setOnMouseClicked(centerMouseHandler);
+	center.setOnMouseEntered(centerMouseHandler);
 
 	getChildren().add(center);
     }
     
-    private void drawSubmenu(MouseEvent event) {
+    private Color [] randomizeColors() {
+		Color [] colors = new Color[] { Color.web("#fdbc55"), Color.web("#ffdba2"),
+				Color.web("#fdbc68"), Color.web("#edcc97"), Color.web("#edb459"), 
+				Color.web("#fdbc55"),Color.web("#edcc97"),Color.web("#fdbc68") };
+		
+		System.out.println ("I AM RANDOMIZING WUUP WUUP" + colors.toString());
+		Random rGen = new Random ();
+		for (int i=0; i<colors.length ;i++) {
+			colors [i] = colors [rGen.nextInt(colors.length)];
+		}
+		
+		System.out.println ("HOW DOU YOU LIKE THAT" + colors.toString());
+		return colors;
+	}
+    
+    private void updateColorCircle () {
+    	orangeHues = randomizeColors();
+    	getChildren().removeAll(items);
+    	for (int i=0; i<items.size(); i++) {
+    		items.get(i).setBackgroundFill(orangeHues[i]);
+    	}
+    	getChildren().addAll(items);
+    }
+
+	private void drawSubmenu(MouseEvent event) {
 		boolean isFolder = true;
 		
 		if (isFolder) {
@@ -170,7 +200,7 @@ public class RadialColorMenu extends Group {
 	System.out.println ("My graphic: " + colorItem.getGraphic().toString());
 	
 	items.add(colorItem);
-	getChildren().add(colorItem);
+	
 	
 	//radius is set here
 
@@ -212,6 +242,33 @@ public class RadialColorMenu extends Group {
 	colorItem.setOnMouseExited(mouseHandler);
 	colorItem.setOnMouseMoved(mouseHandler);
     }
+	
+	private final class RootEventHandler implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent event) {
+			EventType<? extends MouseEvent> action = event.getEventType();
+			
+			if (action == MouseEvent.MOUSE_CLICKED) {
+				System.out.println ("CLICK CLICK CLIK");
+				updateColorCircle();
+				//change back to its parent
+			}
+			
+			if (action == MouseEvent.MOUSE_ENTERED) {
+				System.out.println ("GOODBYE SUBMENU");
+				for (RadialMenuItem item : items) {
+					if (item.getChildren().contains(submenu)) {
+						item.getChildren().remove(submenu);
+						subItems.clear ();
+					}
+			}
+			
+		}
+		
+		
+	}
+	}
 
     private final class ItemExtEventHandler implements EventHandler<MouseEvent> {
 
@@ -233,14 +290,7 @@ public class RadialColorMenu extends Group {
     }
     
     private final class SubItemOnEventHandler implements EventHandler<MouseEvent> {
-    	private RadialMenuItem subItem; 
     	
-    	
-    	private SubItemOnEventHandler(final RadialMenuItem subItem) {
-    	    this.subItem = subItem;
-    	   
-    	}
-
 		@Override
 		public void handle(MouseEvent event) {
 			EventType<? extends MouseEvent> action = event.getEventType();
@@ -279,13 +329,10 @@ public class RadialColorMenu extends Group {
 			if (!colorItem.getChildren().contains(submenu)){
 				if (submenu != null) {
 					//delete old submenu
-					System.out.println ("I ENTER THIS" + submenuDisplayed);
 					for (RadialMenuItem item : items) {
 						if (item.getChildren().contains(submenu)) {
 							item.getChildren().remove(submenu);
 							subItems.clear ();
-							System.out.println("AND I GET TO THIS:");
-							//do nothing for now
 						}
 						
 				}
@@ -297,10 +344,8 @@ public class RadialColorMenu extends Group {
 	    	
 	    }
 	    
-	    if (event.getEventType() == MouseEvent.MOUSE_EXITED_TARGET) {
-	    	System.out.println("MY EVENT IS EVOKED");
-	    	colorItem.getChildren().remove(submenu);
-	    	subItems.clear();
+	    if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
+	    	//is folder change to root if is file open
 		}
 	    
 	    if (event.getEventType() == MouseEvent.MOUSE_EXITED) {
@@ -316,6 +361,7 @@ public class RadialColorMenu extends Group {
 	public void setIcons (Image [] fileIcons) {
 		
 	}
+	
     public ObjectProperty<Paint> selectedColorProperty() {
 	return selectedColor;
     }

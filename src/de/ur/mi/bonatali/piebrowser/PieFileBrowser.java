@@ -26,6 +26,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -51,23 +52,47 @@ public class PieFileBrowser extends Application{
 	private String rootUrl;
 	private Folder root;
 	
+	private Image logoImg;
+	private ImageView logoView; 
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 		// TODO Auto-generated method stub
 		container = new Group ();
+		File f = new File("/resources/de/ur/mi/bonatali/icons/logo2.png");
+		//logoImg = new Image (f.toURI().toString());
+		logoImg = new Image ("file:/resources/de/ur/mi/bonatali/icons/logo2.png", 200.0, 200.0, true, true);
+		System.out.println ("PLEASE SHOW"  + logoImg.getHeight() + logoImg.impl_getUrl() + logoImg.getWidth() + logoImg.getHeight() + logoImg.isBackgroundLoading());
+		logoView = new ImageView ();
+		logoView.setImage(logoImg);
+		logoView.setFitWidth(200.0);
+		//logoView.setPreserveRatio(true);
+		logoView.setSmooth(true);
+		System.out.println ("PLEASE SHOW" + logoImg.getHeight() + logoView.getFitWidth() + logoView.getFitHeight() + logoImg.isBackgroundLoading());
+		
+		
+		
+		
 		final Scene scene = new Scene(container, Color.TRANSPARENT);
 		stage.initStyle(StageStyle.TRANSPARENT);
 		stage.setResizable(false);
 		stage.setScene(scene);
-		stage.centerOnScreen();
+		//stage.centerOnScreen();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
 		stage.setWidth(screenSize.getWidth());
 		stage.setHeight(screenSize.getHeight());
+		
+		logoView.setTranslateX(0.0);
+		logoView.setTranslateY(screenSize.getHeight());
+		container.getChildren().add(logoView);
+		
 		stage.toFront();
 		stage.setTitle("DAS IST MEINE BACHELORARBEIT, BITCH!");
 		stage.show();
 		
+		
+		System.out.println ("IS IT?" + container.getChildren().contains(logoView));
 		rootUrl = "/Users/Natali/Documents/test";
 		root = new Folder (rootUrl);
 		String rootName = root.getName();
